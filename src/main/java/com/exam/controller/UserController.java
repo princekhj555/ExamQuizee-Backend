@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,14 +26,23 @@ public class UserController {
 	
 	@Autowired
 	private UserService userService;
+	
+	@Autowired
+	private BCryptPasswordEncoder bCryptPasswordEncoder;
+	
 	//creating User
 	@PostMapping("/")
 	public User createUser(@RequestBody User user) throws Exception {
 		
 		user.setProfile("default.png");
+		
+		//encoding Password with BCryptPasswordEncoder
+		user.setPassword(this.bCryptPasswordEncoder.encode(user.getPassword()));
+		
+		
 		Set<UserRole> roles=new HashSet<>();
 		Role role=new Role();
-		//for normal User
+//		//for normal User
 		role.setRoleId(45L);
 		role.setRoleName("Normal User");
 		
@@ -47,6 +57,7 @@ public class UserController {
 		return this.userService.createUser(user, roles);
 		
 	}
+	
 	@GetMapping("/{username}")
 	public User getUserByUsername(@PathVariable("username") String username) {
 		return this.userService.getUserByUsername(username);

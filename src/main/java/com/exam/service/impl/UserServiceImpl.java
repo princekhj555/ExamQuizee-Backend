@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.exam.entity.User;
 import com.exam.entity.UserRole;
+import com.exam.helper.UserFoundException;
 import com.exam.repo.RoleRepository;
 import com.exam.repo.UserRepository;
 import com.exam.service.UserService;
@@ -27,7 +28,7 @@ public class UserServiceImpl implements UserService {
 		User local=this.userRepository.findByUsername(user.getUsername());
 		if(local!=null) {
 			System.out.println("User Already Exists!!");
-			throw new Exception("User already exists!!");
+			throw new UserFoundException("User with this username is already in the Database !! Try with another one.");
 		}else {
 			//create user
 			for(UserRole ur:userRoles) {
